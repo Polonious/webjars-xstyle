@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <packaging>jar</packaging>
+    <groupId>org.webjars</groupId>
+    <artifactId>xstyle</artifactId>
+    <version>0.0.5</version>
+    <name>xstyle</name>
+    <description>WebJar for XStyle</description>
+    <url>http://webjars.org</url>
+
+    <licenses>
+        <license>
+            <name>The "New" BSD License</name>
+            <url>http://bugs.dojotoolkit.org/browser/dojo/trunk/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>The Academic Free License, v. 2.1</name>
+            <url>http://bugs.dojotoolkit.org/browser/dojo/trunk/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>http://github.com/Polonious/webjars-xstyle</url>
+        <connection>scm:git:https://github.com/Polonious/webjars-xstyle.git</connection>
+        <developerConnection>scm:git:https://github.com/Polonious/webjars-xstyle.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>tedliang</id>
+            <name>Ted Liang</name>
+            <email>tedliang.email@gmail.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <xstyle.version>0.0.5</xstyle.version>
+        <xstyle.url>https://github.com/kriszyp/xstyle/archive</xstyle.url>
+        <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/xstyle/${xstyle.version}</destDir>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>1.0-beta-4</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals><goal>download-single</goal></goals>
+                        <configuration>
+                            <url>${xstyle.url}</url>
+                            <fromFile>v${xstyle.version}.zip</fromFile>
+                            <toFile>${project.build.directory}/xstyle.zip</toFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <target>
+                                <echo message="unzip archive" />
+                                <unzip src="${project.build.directory}/xstyle.zip" dest="${project.build.directory}/xstyle" />
+                                <echo message="moving resources" />
+                                <move todir="${destDir}" overwrite="true" verbose="true">
+                                    <fileset dir="${project.build.directory}/xstyle/xstyle-${xstyle.version}" />
+                                </move>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
